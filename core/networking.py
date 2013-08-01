@@ -59,7 +59,6 @@ class Networking:
         alldata = [getRGB(*pixel) for pixel in intbuffer]
         alldata = [item for sublist in alldata for item in sublist]
 
-        start_time = time.time()
         
         for client in [client for client in self._app.settings['networking']['clients'] if client["enabled"]]:
             # TODO: Split into smaller packets so that less-than-ideal networks will be OK
@@ -101,5 +100,5 @@ class Networking:
                     print "Unexpected error:", sys.exc_info()[0]
                     raise
                     
-        print "That took %f ms" % (1000*(time.time()-start_time))
+
 
