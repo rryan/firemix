@@ -59,12 +59,14 @@ class Networking:
         alldata = [getRGB(*pixel) for pixel in intbuffer]
         alldata = [item for sublist in alldata for item in sublist]
 
+        start_time = time.time()
+        
         for client in [client for client in self._app.settings['networking']['clients'] if client["enabled"]]:
             # TODO: Split into smaller packets so that less-than-ideal networks will be OK
-            packet = array.array('B', [])
             client_color_mode = client["color-mode"]
 
             for strand in range(len(strand_settings)):
+                packet = array.array('B', [])
                 if not strand_settings[strand]["enabled"]:
                     continue
                 color_mode = strand_settings[strand]["color-mode"]
@@ -87,7 +89,17 @@ class Networking:
 #            length = len(alldata)
 #            packet.extend(array.array('B', [0, 0, (length & 0xFF), (length & 0xFF00) >> 8]))
 #            packet.extend(array.array('B', alldata))
-
-            self._socket.sendto(packet, (client["host"], client["port"]))
-
+                try:
+                    #print "Sending packet of length %i for strand %i", (len(packet), strand)
+                    self._socket.sendto(packet, (client["host"], client["port"]))
+                except IOError as (errno, strerror):
+                    print "I/O error({0}): {1}".format(errno, strerror)
+                    #print "On strand %i with length %i" % (strand, len(packet))
+                except ValueError:
+                    print "Could not convert data to an integer."
+                except:
+                    print "Unexpected error:", sys.exc_info()[0]
+                    raise
+                    
+        print "That took %f ms" % (1000*(time.time()-start_time))
 
