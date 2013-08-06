@@ -24,6 +24,7 @@ class Networking:
     def open_socket(self):
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+    @profile
     def write(self, buffer):
         """
         Performs a bulk strand write.
