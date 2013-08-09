@@ -5,6 +5,8 @@ import random
 import math
 import numpy as np
 
+from profilehooks import profile
+
 USE_YAPPI = True
 try:
     import yappi
@@ -64,6 +66,7 @@ class Mixer(QtCore.QObject):
         self._global_dimmer = 1.0
         self._global_speed = 1.0
         self._render_in_progress = False
+        self._last_tick_time = time.time()
         self.transition_progress = 0.0
 
         if self._app.args.yappi and USE_YAPPI:
@@ -191,6 +194,7 @@ class Mixer(QtCore.QObject):
     def get_transition_duration(self):
         return self._transition_duration
 
+    @profile
     def on_tick_timer(self):
         if self._frozen:
             delay = 1.0 / self._tick_rate
@@ -263,7 +267,9 @@ class Mixer(QtCore.QObject):
 
     def tick(self):
         self._num_frames += 1
-        dt = (self._global_speed / self._tick_rate)
+        now = time.time()
+        dt = now - self._last_tick_time
+        self._last_tick_time = now
         if len(self._playlist) > 0:
 
             self._playlist.get_active_preset().clear_commands()

@@ -22,7 +22,7 @@ def hsv_float_to_rgb_uint8(hsv_color):
 def clip(low, input, high):
     return min(max(input, low), high)
 
-def hls_blend(start, end, progress, mode, fade_length=1.0, ease_power=0.5):
+def hls_blend(start, end, temporary_buffer, progress, mode, fade_length=1.0, ease_power=0.5):
 
     p = abs(progress)
 
@@ -71,7 +71,13 @@ def hls_blend(start, end, progress, mode, fade_length=1.0, ease_power=0.5):
 
     np.clip(l, 0, 1, l)
 
-    frame = np.asarray([h, l, s]).T
+    if temporary_buffer is not None:
+        frame = temporary_buffer
+        frame[:, 0] = h
+        frame[:, 1] = l
+        frame[:, 2] = s
+    else:
+        frame = np.asarray([h, l, s]).T
 
     return frame
 
@@ -137,12 +143,12 @@ def hls_to_rgb(hls):
 
     C = (1 - np.absolute(2 * L - 1)) * S
 
-    #Hp = H * 6.0
-    i = (H * 6.0).astype(np.int)
-    f = (H * 6.0) - i  # |H' mod 2|  ?
+    Hp = H * 6.0
+    i = Hp.astype(np.int)
+    #f = Hp - i  # |H' mod 2|  ?
 
-    #X = C * (1 - np.absolute(np.mod(Hp, 2) - 1))
-    X = C * (1 - f)
+    X = C * (1 - np.absolute(np.mod(Hp, 2) - 1))
+    #X = C * (1 - f)
 
     # initialize with zero
     R = np.zeros(H.shape, float)
