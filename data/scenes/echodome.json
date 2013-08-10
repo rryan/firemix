@@ -10,7 +10,7 @@
         1000
     ], 
     "file-type": "scene", 
-   "fixtures": [
+  "fixtures": [
 {
       "address": 0, 
       "pixels": 60, 
@@ -513,7 +513,7 @@
         257
       ], 
       "pos2": [
-        500, 
+        676, 
         257
       ], 
       "strand": 9, 
@@ -522,7 +522,7 @@
       "address": 3, 
       "pixels": 60, 
       "pos1": [
-        500, 
+        676, 
         257
       ], 
       "pos2": [
@@ -942,8 +942,8 @@
         136
       ], 
       "pos2": [
-        785, 
-        593
+        676, 
+        257
       ], 
       "strand": 17, 
       "type": "linear"
