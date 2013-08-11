@@ -31,7 +31,8 @@ class OscServer(liblo.ServerThread):
             log.error("Couldn't understand message: %s %s %s %s", path, args, types, src)
             return
 
-        time, value = args
+        message_time, value = args
+
 
         feature = {
             'group': components[0],
