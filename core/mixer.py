@@ -135,6 +135,15 @@ class Mixer(QtCore.QObject):
     def feature_received(self, feature):
         log.info('Mixer received feature.')
         self.features_by_group[feature['group']][feature['feature']].update(feature)
+
+        # Maintain legacy onset behavior.
+        if feature['feature'] == 'onset' and feature['value']:
+            t = time.clock()
+            if (t - self._last_onset_time) > self._onset_holdoff:
+                self._onset = True
+                self._last_onset_time = t
+
+        # Notify active preset of feature.
         self._playlist.get_active_preset().on_feature(feature)
 
     def set_global_dimmer(self, dimmer):
