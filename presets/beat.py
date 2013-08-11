@@ -2,7 +2,7 @@ import math
 import numpy as np
 
 from lib.raw_preset import RawPreset
-from lib.parameters import FloatParameter, HLSParameter
+from lib.parameters import StringParameter, FloatParameter, HLSParameter
 from lib.color_fade import ColorFade
 
 class BeatPositionCircles(RawPreset):
@@ -15,16 +15,18 @@ class BeatPositionCircles(RawPreset):
             self.color = 0
             self._fader = ColorFade(fade_colors, self._fader_steps)
             self.alive = True
+            self.feature = 'beat'
 
     def setup(self):
         self.beats = []
+        self.add_parameter(StringParameter('feature', 'beat'))
         self.add_parameter(FloatParameter('speed', 100))
         self.add_parameter(FloatParameter('width', 5))
         self.add_parameter(HLSParameter('color-start', (0.0, 0.5, 1.0)))
         self.add_parameter(HLSParameter('color-end', (1.0, 0.5, 1.0)))
 
     def parameter_changed(self, parameter):
-        pass
+        self.feature = self.parameter('feature').get()
 
     def reset(self):
         self.pixel_locations = self.scene().get_all_pixel_locations()
@@ -61,7 +63,7 @@ class BeatPositionCircles(RawPreset):
         self.setAllHLS(hues, luminances, 1)
 
     def on_feature(self, feature):
-        if feature['feature'] == 'beat':
+        if feature['feature'] == self.feature:
             self.beat = feature['value']
 
             if not self.beat:
@@ -69,7 +71,6 @@ class BeatPositionCircles(RawPreset):
 
             group = feature['group']
             features_by_group = self._mixer.features_by_group[group]
-
             x = features_by_group['pos_x'].get('value', None)
             y = features_by_group['pos_y'].get('value', None)
             z = features_by_group['pos_z'].get('value', None)
