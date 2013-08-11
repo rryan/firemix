@@ -44,6 +44,7 @@ class FireMixApp(QtCore.QThread):
         self.osc_server = None
         if not self.args.noosc:
             self.osc_server = OscServer(self.args.osc_port)
+            self.osc_server.notifier.feature_received.connect(self.mixer.feature_received)
             self.osc_server.start()
 
         self.mixer.set_playlist(self.playlist)
