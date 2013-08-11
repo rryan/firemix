@@ -72,7 +72,11 @@ class BufferUtils:
                 index += scene.fixture(strand, i).pixels
 
             fixture_start = index
-            fixture_end = index + scene.fixture(strand, fixture).pixels
+            fixture_obj = scene.fixture(strand, fixture)
+            if fixture_obj is None:
+                import pdb
+                pdb.set_trace()
+            fixture_end = index + fixture_obj.pixels
 
             # (3) Add the offset along the fixture
             index += offset
