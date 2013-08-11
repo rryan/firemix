@@ -17,6 +17,7 @@ class OscServer(liblo.ServerThread):
     def __init__(self, port):
         super(OscServer, self).__init__(port)
         self.notifier = OscServer.Notifier()
+        self.features_seen = set()
 
     @liblo.make_method(None, 'ff')
     def float_float_message_received(self, path, args, types, src):
@@ -32,6 +33,10 @@ class OscServer(liblo.ServerThread):
             return
 
         message_time, value = args
+
+        if components[1] not in self.features_seen:
+            self.features_seen.add(components[1])
+            print "New feature seen:", components[1]
 
 
         feature = {
