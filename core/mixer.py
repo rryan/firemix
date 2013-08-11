@@ -1,4 +1,5 @@
 import logging
+from collections import defaultdict
 import threading
 import time
 import random
@@ -68,6 +69,7 @@ class Mixer(QtCore.QObject):
         self._render_in_progress = False
         self._last_tick_time = time.time()
         self.transition_progress = 0.0
+        self.features_by_group = defaultdict(lambda: defaultdict(lambda: {}))
 
         if self._app.args.yappi and USE_YAPPI:
             yappi.start()
@@ -128,6 +130,12 @@ class Mixer(QtCore.QObject):
         if (t - self._last_onset_time) > self._onset_holdoff:
             self._last_onset_time = t
             self._onset = True
+
+    @QtCore.Slot(dict)
+    def feature_received(self, feature):
+        log.info('Mixer received feature.')
+        self.features_by_group[feature['group']][feature['feature']].update(feature)
+        self._playlist.get_active_preset().on_feature(feature)
 
     def set_global_dimmer(self, dimmer):
         self._global_dimmer = dimmer
