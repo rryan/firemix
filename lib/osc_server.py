@@ -42,15 +42,12 @@ class OscServer(liblo.ServerThread):
             'time_received': time.time(),
         }
 
-        print "received unknown message", path, args, types, src
+        #print "received unknown message", path, args, types, src
         self.notifier.feature_received.emit(feature)
 
     @liblo.make_method(None, 'fT')
     @liblo.make_method(None, 'fF')
     def float_bool_message_received(self, path, args, types, src):
-        if 'pitch' in path or 'onset' in path:
-            return
-
         if not path.startswith('/'):
             return
         components = path[1:].split('/')
