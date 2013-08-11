@@ -21,9 +21,6 @@ class OscServer(liblo.ServerThread):
 
     @liblo.make_method(None, 'ff')
     def float_float_message_received(self, path, args, types, src):
-        if 'pitch' in path or 'onset' in path:
-            return
-
         if not path.startswith('/'):
             return
         components = path[1:].split('/')
