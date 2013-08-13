@@ -1,0 +1,16 @@
+{
+    "file-type": "playlist",
+    "playlist": [
+        {
+            "classname": "BeatPositionCircles",
+            "name": "beat",
+            "params": {
+                "color-end": "(1.0, 0.5, 1.0)",
+                "color-start": "(0.0, 0.5, 1.0)",
+                "feature": "beat",
+                "speed": "100.0",
+                "width": "10.0"
+            }
+        }
+    ]
+}

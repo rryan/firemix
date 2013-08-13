@@ -1,0 +1,16 @@
+{
+    "file-type": "playlist", 
+    "playlist": [
+        {
+            "classname": "PositionPulse", 
+            "name": "vumeter", 
+            "params": {
+                "color-end": "(1.0, 0.5, 1.0)", 
+                "color-speed": "5.0", 
+                "color-start": "(0.0, 0.5, 1.0)", 
+                "feature": "vumeter", 
+                "scale": "500.0"
+            }
+        }
+    ]
+}
