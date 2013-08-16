@@ -50,6 +50,10 @@ class AudioEmitter(object):
         available."""
         return self._features[feature_name].get('value', None)
 
+    def set_position(self, pos):
+        # TODO(rryan): implement
+        pass
+
     def position(self):
         """Convenience function for getting the position of the AudioEmitter in
         space. Returns None if the position is not available, otherwise
