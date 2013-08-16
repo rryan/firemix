@@ -14,6 +14,13 @@ def restricted_range_float_handler(path, min_value, max_value):
         return liblo.make_method(path, 'f')(handler)
     return decorate
 
+def no_arg_handler(path):
+    def decorate(function):
+        def handler(self, path, args, types, src):
+            return function(self)
+        return liblo.make_method(path, '')(handler)
+    return decorate
+
 class OscServer(liblo.ServerThread):
 
     def __init__(self, port, mixer):
@@ -79,6 +86,22 @@ class OscServer(liblo.ServerThread):
     @restricted_range_float_handler('/firemix/global_speed', 0.0, 1.0)
     def set_global_speed(self, value):
         self.mixer.set_global_speed(value)
+
+    @no_arg_handler('/firemix/next_preset')
+    def next_preset(self):
+        self.mixer.next()
+
+    @no_arg_handler('/firemix/previous_preset')
+    def prev_preset(self):
+        self.mixer.prev()
+
+    @no_arg_handler('/firemix/start_transition')
+    def start_transition(self):
+        self.mixer.start_transition()
+
+    @no_arg_handler('/firemix/toggle_pause')
+    def toggle_pause(self):
+        self.mixer.pause(not self.mixer.is_paused())
 
     def start(self):
         super(OscServer, self).start()
