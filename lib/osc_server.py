@@ -31,10 +31,11 @@ def no_arg_handler(path):
 
 class OscServer(liblo.ServerThread):
 
-    def __init__(self, port, mixer):
+    def __init__(self, port, mixxx_port, mixer):
         super(OscServer, self).__init__(port)
         self.features_seen = set()
         self.mixer = mixer
+        self.mixxx_address = liblo.Address(mixxx_port)
 
     @liblo.make_method(None, 'ff')
     def float_float_message_received(self, path, args, types, src):

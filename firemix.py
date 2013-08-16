@@ -29,6 +29,7 @@ if __name__ == "__main__":
     parser.add_argument("--verbose", action='store_const', const=True, default=False, help="Enable verbose log output")
     parser.add_argument("--noaudio", action='store_const', const=True, default=False, help="Disable audio processing client")
     parser.add_argument("--osc_port", type=int, default=2447, help="OSC server port")
+    parser.add_argument("--mixxx_osc_port", type=int, default=2448, help="Mixxx OSC server port")
     parser.add_argument("--noosc", action='store_const', const=True, default=False, help="Disable OSC server")
 
     args = parser.parse_args()
