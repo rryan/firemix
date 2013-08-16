@@ -140,6 +140,19 @@ class OscServer(liblo.ServerThread):
         self.mixer.run()
         self.mixer.pause(paused)
 
+    @liblo.make_method('/mixxx/control/set', None)
+    def mixxx_control_set(self, path, args, types, src):
+        if not re.match('^(sd)+$', types):
+            return
+
+        # Simply re-broadcast to Mixxx.
+
+        for i in xrange(len(args) / 2):
+            control, value = args[i * 2], args[i * 2 + 1]
+            print '/mixxx/control/set', control, value
+
+        liblo.send(self.mixxx_address, '/control/set', *zip(types, args))
+
     def start(self):
         super(OscServer, self).start()
         log.info("OSC server listening on port %d.", self.get_port())
