@@ -146,11 +146,6 @@ class OscServer(liblo.ServerThread):
             return
 
         # Simply re-broadcast to Mixxx.
-
-        for i in xrange(len(args) / 2):
-            control, value = args[i * 2], args[i * 2 + 1]
-            print '/mixxx/control/set', control, value
-
         liblo.send(self.mixxx_address, '/control/set', *zip(types, args))
 
     def start(self):
