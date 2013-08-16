@@ -83,9 +83,18 @@ class OscServer(liblo.ServerThread):
         print 'set_global_dimmer', value
         self.mixer.set_global_dimmer(value)
 
-    @restricted_range_float_handler('/firemix/global_speed', 0.0, 1.0)
+    @restricted_range_float_handler('/firemix/global_speed', 0.0, 10.0)
     def set_global_speed(self, value):
         self.mixer.set_global_speed(value)
+
+
+    @restricted_range_float_handler('/firemix/preset_duration', 0.0, 60.0)
+    def set_preset_duration(self, value):
+        self.mixer.set_preset_duration(value)
+
+    @restricted_range_float_handler('/firemix/transition_duration', 0.0, 60.0)
+    def set_transition_duration(self, value):
+        self.mixer.set_transition_duration(value)
 
     @no_arg_handler('/firemix/next_preset')
     def next_preset(self):
@@ -102,6 +111,10 @@ class OscServer(liblo.ServerThread):
     @no_arg_handler('/firemix/toggle_pause')
     def toggle_pause(self):
         self.mixer.pause(not self.mixer.is_paused())
+
+    @no_arg_handler('/firemix/toggle_freeze')
+    def toggle_freeze(self):
+        self.mixer.freeze(not self.mixer.is_frozen())
 
     def start(self):
         super(OscServer, self).start()
