@@ -2,6 +2,7 @@ import liblo
 import logging
 import re
 import time
+import os
 from PySide import QtCore, QtNetwork
 
 log = logging.getLogger("firemix.lib.osc_server")
@@ -12,6 +13,13 @@ def restricted_range_float_handler(path, min_value, max_value):
             if min_value <= args[0] <= max_value:
                 return function(self, args[0])
         return liblo.make_method(path, 'f')(handler)
+    return decorate
+
+def string_handler(path):
+    def decorate(function):
+        def handler(self, path, args, types, src):
+            return function(self, args[0])
+        return liblo.make_method(path, 's')(handler)
     return decorate
 
 def no_arg_handler(path):
@@ -115,6 +123,21 @@ class OscServer(liblo.ServerThread):
     @no_arg_handler('/firemix/toggle_freeze')
     def toggle_freeze(self):
         self.mixer.freeze(not self.mixer.is_frozen())
+
+    @string_handler('/firemix/load_playlist')
+    def load_playlist(self, playlist_name):
+        paused = self.mixer.is_paused()
+        self.mixer.stop()
+        old_name = self.mixer._playlist.filename
+
+        playlist_path = os.path.join(os.getcwd(), "data", "playlists",
+                                     ''.join((playlist_name, '.json')))
+        self.mixer._playlist.set_filename(playlist_path)
+
+        if not self.mixer._playlist.open():
+            self.mixer._playlist.set_filename(old_name)
+        self.mixer.run()
+        self.mixer.pause(paused)
 
     def start(self):
         super(OscServer, self).start()
