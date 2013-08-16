@@ -6,18 +6,20 @@ from PySide import QtCore, QtNetwork
 
 log = logging.getLogger("firemix.lib.osc_server")
 
+def restricted_range_float_handler(path, min_value, max_value):
+    def decorate(function):
+        def handler(self, path, args, types, src):
+            if min_value <= args[0] <= max_value:
+                return function(self, args[0])
+        return liblo.make_method(path, 'f')(handler)
+    return decorate
+
 class OscServer(liblo.ServerThread):
 
-    class Notifier(QtCore.QObject):
-        feature_received = QtCore.Signal(dict)
-
-        def __init__(self):
-            super(OscServer.Notifier, self).__init__()
-
-    def __init__(self, port):
+    def __init__(self, port, mixer):
         super(OscServer, self).__init__(port)
-        self.notifier = OscServer.Notifier()
         self.features_seen = set()
+        self.mixer = mixer
 
     @liblo.make_method(None, 'ff')
     def float_float_message_received(self, path, args, types, src):
@@ -45,7 +47,7 @@ class OscServer(liblo.ServerThread):
         }
 
         #print "received unknown message", path, args, types, src
-        self.notifier.feature_received.emit(feature)
+        self.mixer.feature_received(feature)
 
     @liblo.make_method(None, 'fT')
     @liblo.make_method(None, 'fF')
@@ -67,8 +69,16 @@ class OscServer(liblo.ServerThread):
             'value': value,
             'time_received': time.time(),
         }
+        self.mixer.feature_received(feature)
 
-        self.notifier.feature_received.emit(feature)
+    @restricted_range_float_handler('/firemix/global_dimmer', 0.0, 1.0)
+    def set_global_dimmer(self, value):
+        print 'set_global_dimmer', value
+        self.mixer.set_global_dimmer(value)
+
+    @restricted_range_float_handler('/firemix/global_speed', 0.0, 1.0)
+    def set_global_speed(self, value):
+        self.mixer.set_global_speed(value)
 
     def start(self):
         super(OscServer, self).start()
