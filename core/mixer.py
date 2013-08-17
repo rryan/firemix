@@ -136,6 +136,8 @@ class Mixer(QtCore.QObject):
         if audio_emitter is None:
             audio_emitter = AudioEmitter(group)
             self._audio_emitters_by_group[group] = audio_emitter
+            cx, cy = self._scene.center_point()
+            audio_emitter.set_target_position((cx, cy, 0))
         return audio_emitter
 
     @QtCore.Slot(dict)
