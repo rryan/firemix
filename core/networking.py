@@ -24,8 +24,12 @@ class Networking:
     def open_socket(self):
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+    def write_commands(self, commands):
+        """TODO implement"""
+        pass
+
     @profile
-    def write(self, buffer):
+    def write_buffer(self, buffer):
         """
         Performs a bulk strand write.
         Decodes the HLS-Float data according to client settings
