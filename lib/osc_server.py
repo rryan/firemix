@@ -151,3 +151,13 @@ class OscServer(liblo.ServerThread):
     def start(self):
         super(OscServer, self).start()
         log.info("OSC server listening on port %d.", self.get_port())
+
+    def broadcast_mixxx_message(self, path, args):
+        liblo.send(self.mixxx_address, path, *args)
+
+    def broadcast_mixxx_control_updates(self, args):
+        values = []
+        for control, value in args:
+            values.append(('s', control))
+            values.append(('d', value))
+        self.broadcast_mixxx_message('/control/set', values)
