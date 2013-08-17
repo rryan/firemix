@@ -385,6 +385,16 @@ class Mixer(QtCore.QObject):
                 index = int((1.0 / tick_time))
                 self._tick_time_data[index] = self._tick_time_data.get(index, 0) + 1
 
+        # Update Mixxx with the latest values.
+        control_updates = []
+        for group, emitter in self._audio_emitters_by_group.iteritems():
+            x, y, z = emitter.target_position()
+            control_updates.append(('%s,position_x' % group, x))
+            control_updates.append(('%s,position_y' % group, y))
+            control_updates.append(('%s,position_z' % group, z))
+        self._app.osc_server.broadcast_mixxx_control_updates(control_updates)
+
+
     def scene(self):
         return self._scene
 
