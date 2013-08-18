@@ -21,11 +21,13 @@ class Playlist(JSONDict):
         if emit is not None:
             emit()
 
-    def __init__(self, app):
+    def __init__(self, app, name, last_playlist_settings_key):
         self._app = app
-        self.name = app.args.playlist
+        self._last_playlist_settings_key = last_playlist_settings_key
+        self.name = name
         if self.name is None:
-            self.name = self._app.settings.get("mixer").get("last_playlist", "default")
+            self.name = self._app.settings.get("mixer").get(
+                self.last_playlist_settings_key, "default")
         filepath = os.path.join(os.getcwd(), "data", "playlists", "".join([self.name, ".json"]))
         JSONDict.__init__(self, 'playlist', filepath, True)
 
@@ -131,7 +133,7 @@ class Playlist(JSONDict):
             playlist.append(playlist_entry)
         self.data['playlist'] = playlist
         # Superclass write to file
-        self._app.settings.get("mixer")["last_playlist"] = self.name
+        self._app.settings.get("mixer")[self._last_playlist_settings_key] = self.name
         JSONDict.save(self)
 
     def get(self):

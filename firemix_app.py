@@ -32,7 +32,7 @@ class FireMixApp(QtCore.QThread):
         self.scene = Scene(self)
         self.plugins = PluginLoader()
         self.mixer = Mixer(self)
-        self.playlist = Playlist(self)
+        self.playlist = Playlist(self, self.args.playlist, 'last_playlist')
 
         self.scene.warmup()
 
