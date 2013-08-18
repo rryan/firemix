@@ -29,6 +29,19 @@ def no_arg_handler(path):
         return liblo.make_method(path, '')(handler)
     return decorate
 
+def layer_handler(path, extra_types=''):
+    def decorate(function):
+        def handler(self, path, args, types, src):
+            if len(args) == 0:
+                return
+            layer = self.mixer.layer_by_name(args[0])
+            if layer is None:
+                return
+            return function(self, layer, *args[1:])
+        return liblo.make_method(path, 's' + extra_types)(handler)
+    return decorate
+
+
 class OscServer(liblo.ServerThread):
 
     def __init__(self, port, mixxx_port, mixer):
@@ -107,21 +120,6 @@ class OscServer(liblo.ServerThread):
         for layer in self.mixer._layers:
             layer.set_transition_duration(value)
 
-    @no_arg_handler('/firemix/next_preset')
-    def next_preset(self):
-        for layer in self.mixer._layers:
-            layer.next()
-
-    @no_arg_handler('/firemix/previous_preset')
-    def prev_preset(self):
-        for layer in self.mixer._layers:
-            layer.prev()
-
-    @no_arg_handler('/firemix/start_transition')
-    def start_transition(self):
-        for layer in self.mixer._layers:
-            layer.start_transition()
-
     @no_arg_handler('/firemix/toggle_pause')
     def toggle_pause(self):
         self.mixer.pause(not self.mixer.is_paused())
@@ -130,9 +128,35 @@ class OscServer(liblo.ServerThread):
     def toggle_freeze(self):
         self.mixer.freeze(not self.mixer.is_frozen())
 
-    @string_handler('/firemix/load_playlist')
-    def load_playlist(self, playlist_name):
-        playlist = self.mixer.default_layer()._playlist
+    @no_arg_handler('/firemix/layer/next_preset')
+    def layer_next_preset_all(self):
+        for layer in self.mixer._layers:
+            layer.next()
+
+    @layer_handler('/firemix/layer/next_preset')
+    def layer_next_preset(self, layer):
+        layer.next()
+
+    @no_arg_handler('/firemix/layer/previous_preset')
+    def layer_previous_preset_all(self):
+        for layer in self.mixer._layers:
+            layer.prev()
+
+    @layer_handler('/firemix/layer/previous_preset')
+    def layer_previous_preset(self, layer):
+        layer.prev()
+
+    @no_arg_handler('/firemix/layer/start_transition')
+    def layer_start_transition_all(self):
+        for layer in self.mixer._layers:
+            layer.start_transition()
+
+    @layer_handler('/firemix/layer/start_transition')
+    def layer_start_transition(self, layer):
+        layer.start_transition()
+
+    def load_playlist_to_layer(self, layer, playlist_name):
+        playlist = layer._playlist
         paused = self.mixer.is_paused()
         self.mixer.stop()
         old_name = playlist.filename
@@ -145,6 +169,16 @@ class OscServer(liblo.ServerThread):
             playlist.set_filename(old_name)
         self.mixer.run()
         self.mixer.pause(paused)
+
+    @string_handler('/firemix/layer/load_playlist')
+    def load_playlist(self, playlist_name):
+        """Load a playlist to the default layer."""
+        self.load_playlist_to_layer(self.mixer.default_layer(), playlist_name)
+
+    @layer_handler('/firemix/layer/load_playlist', extra_types='s')
+    def load_playlist(self, layer, playlist_name):
+        """Load a playlist to the specified layer."""
+        self.load_playlist_to_layer(layer, playlist_name)
 
     @liblo.make_method('/mixxx/control/set', None)
     def mixxx_control_set(self, path, args, types, src):
