@@ -37,6 +37,12 @@ class FireMixApp(QtCore.QThread):
         default_layer.set_playlist(default_playlist)
         self.mixer.add_layer(default_layer)
 
+        if self.args.speech_layer:
+            speech_playlist = Playlist(self, self.args.speech_playlist, 'last_speech_playlist')
+            speech_layer = Layer(self, 'speech')
+            speech_layer.set_playlist(speech_playlist)
+            self.mixer.add_layer(speech_layer)
+
         self.scene.warmup()
 
         self.aubio_connector = None
