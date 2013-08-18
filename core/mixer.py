@@ -2,8 +2,6 @@ import logging
 from collections import defaultdict
 import threading
 import time
-import random
-import math
 import numpy as np
 
 from profilehooks import profile
@@ -16,8 +14,6 @@ except ImportError:
 
 from PySide import QtCore
 
-from lib.commands import SetAll, SetStrand, SetFixture, SetPixel, commands_overlap, blend_commands, render_command_list
-from lib.raw_preset import RawPreset
 from lib.buffer_utils import BufferUtils
 from lib.audio_emitter import AudioEmitter
 from lib.colors import blend_to_buffer
