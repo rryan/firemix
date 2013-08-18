@@ -5,14 +5,14 @@ from PySide import QtCore
 from core.mixer import Mixer
 from core.networking import Networking
 from core.scene_loader import SceneLoader
-from lib.playlist import Playlist
 from lib.settings import Settings
 from lib.scene import Scene
 from lib.plugin_loader import PluginLoader
 from lib.aubio_connector import AubioConnector
 from lib.osc_server import OscServer
 from lib.buffer_utils import BufferUtils
-
+from lib.layer import Layer
+from lib.playlist import Playlist
 
 log = logging.getLogger("firemix")
 
@@ -21,8 +21,6 @@ class FireMixApp(QtCore.QThread):
     """
     Main logic of FireMix.  Operates the mixer tick loop.
     """
-    playlist_changed = QtCore.Signal()
-
     def __init__(self, args, parent=None):
         self._running = False
         self.args = args
@@ -32,7 +30,12 @@ class FireMixApp(QtCore.QThread):
         self.scene = Scene(self)
         self.plugins = PluginLoader()
         self.mixer = Mixer(self)
-        self.playlist = Playlist(self, self.args.playlist, 'last_playlist')
+
+        # Create the default layer.
+        default_playlist = Playlist(self, self.args.playlist, 'last_playlist')
+        default_layer = Layer(self, 'default')
+        default_layer.set_playlist(default_playlist)
+        self.mixer.add_layer(default_layer)
 
         self.scene.warmup()
 
@@ -47,8 +50,6 @@ class FireMixApp(QtCore.QThread):
                 self.args.osc_port, self.args.mixxx_osc_port, self.mixer)
             self.osc_server.start()
 
-        self.mixer.set_playlist(self.playlist)
-
         if self.args.preset:
             log.info("Setting constant preset %s" % args.preset)
             self.mixer.set_constant_preset(args.preset)
@@ -62,5 +63,5 @@ class FireMixApp(QtCore.QThread):
     def stop(self):
         self._running = False
         self.mixer.stop()
-        self.playlist.save()
+        self.mixer.save()
         self.settings.save()

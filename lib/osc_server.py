@@ -99,23 +99,28 @@ class OscServer(liblo.ServerThread):
 
     @restricted_range_float_handler('/firemix/preset_duration', 0.0, 60.0)
     def set_preset_duration(self, value):
-        self.mixer.set_preset_duration(value)
+        for layer in self.mixer._layers:
+            layer.set_preset_duration(value)
 
     @restricted_range_float_handler('/firemix/transition_duration', 0.0, 60.0)
     def set_transition_duration(self, value):
-        self.mixer.set_transition_duration(value)
+        for layer in self.mixer._layers:
+            layer.set_transition_duration(value)
 
     @no_arg_handler('/firemix/next_preset')
     def next_preset(self):
-        self.mixer.next()
+        for layer in self.mixer._layers:
+            layer.next()
 
     @no_arg_handler('/firemix/previous_preset')
     def prev_preset(self):
-        self.mixer.prev()
+        for layer in self.mixer._layers:
+            layer.prev()
 
     @no_arg_handler('/firemix/start_transition')
     def start_transition(self):
-        self.mixer.start_transition()
+        for layer in self.mixer._layers:
+            layer.start_transition()
 
     @no_arg_handler('/firemix/toggle_pause')
     def toggle_pause(self):
@@ -127,16 +132,17 @@ class OscServer(liblo.ServerThread):
 
     @string_handler('/firemix/load_playlist')
     def load_playlist(self, playlist_name):
+        playlist = self.mixer.default_layer()._playlist
         paused = self.mixer.is_paused()
         self.mixer.stop()
-        old_name = self.mixer._playlist.filename
+        old_name = playlist.filename
 
         playlist_path = os.path.join(os.getcwd(), "data", "playlists",
                                      ''.join((playlist_name, '.json')))
-        self.mixer._playlist.set_filename(playlist_path)
+        playlist.set_filename(playlist_path)
 
-        if not self.mixer._playlist.open():
-            self.mixer._playlist.set_filename(old_name)
+        if not playlist.open():
+            playlist.set_filename(old_name)
         self.mixer.run()
         self.mixer.pause(paused)
 

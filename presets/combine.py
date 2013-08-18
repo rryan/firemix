@@ -13,12 +13,20 @@ class CombinePresets(RawPreset):
         self.add_parameter(StringParameter('second-preset', ""))
         self.add_parameter(FloatParameter('transition-progress', 0.5))
         self.add_parameter(StringParameter('transition-mode', "Additive Blend"))
+        self.add_parameter(StringParameter('layer', 'default'))
         self.parameter_changed(None)
         self._preset1_buffer = BufferUtils.create_buffer()
         self._preset2_buffer = BufferUtils.create_buffer()
 
+    def layer(self):
+        return self._mixer.layer_by_name(self.parameter('layer').get())
+
     def parameter_changed(self, parameter):
-        self._transition = self._mixer.get_transition_by_name(self.parameter('transition-mode').get())
+        layer = self.layer()
+        if layer is None:
+            return
+
+        self._transition = layer.get_transition_by_name(self.parameter('transition-mode').get())
         if self._transition:
             self._transition.reset()
 
@@ -26,9 +34,12 @@ class CombinePresets(RawPreset):
         self.parameter_changed(None)
 
     def draw(self, dt):
+        layer = self.layer()
+        if layer is None:
+            return
 
-        preset1 = self._mixer._playlist.get_preset_by_name(self.parameter('first-preset').get())
-        preset2 = self._mixer._playlist.get_preset_by_name(self.parameter('second-preset').get())
+        preset1 = layer._playlist.get_preset_by_name(self.parameter('first-preset').get())
+        preset2 = layer._playlist.get_preset_by_name(self.parameter('second-preset').get())
 
         if preset1 and preset2 and self._transition:
             # this is here because many transitions are set up to only play from start to end :(
