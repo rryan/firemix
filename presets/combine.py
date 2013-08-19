@@ -55,3 +55,17 @@ class CombinePresets(RawPreset):
             self._pixel_buffer = self._transition.get(
                 preset1_buffer, preset2_buffer,
                 self.parameter('transition-progress').get())
+
+    def on_feature(self, feature):
+        layer = self.layer()
+        if layer is None:
+            return
+
+        preset1 = layer._playlist.get_preset_by_name(self.parameter('first-preset').get())
+        preset2 = layer._playlist.get_preset_by_name(self.parameter('second-preset').get())
+
+        if preset1 is not None:
+            preset1.on_feature(feature)
+
+        if preset2 is not None:
+            preset2.on_feature(feature)

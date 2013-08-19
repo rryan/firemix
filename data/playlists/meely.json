@@ -1,0 +1,119 @@
+{
+    "file-type": "playlist", 
+    "playlist": [
+        {
+            "classname": "BlankDonuts", 
+            "name": "beat", 
+            "params": {
+                "color-end": "(1.0, 0.5, 1.0)", 
+                "color-speed": "10.0", 
+                "color-start": "(0.0, 0.5, 1.0)", 
+                "color-steps": "256", 
+                "feature": "beat", 
+                "speed": "100.0", 
+                "width": "10.0"
+            }
+        }, 
+        {
+            "classname": "CombinePresets", 
+            "name": "eye hurt donut", 
+            "params": {
+                "first-preset": "BlankDonuts-1", 
+                "layer": "default", 
+                "second-preset": "RGBFade-1", 
+                "transition-mode": "Additive Blend", 
+                "transition-progress": "0.5"
+            }
+        }, 
+        {
+            "classname": "BlankDonuts", 
+            "name": "BlankDonuts-1", 
+            "params": {
+                "color-end": "(1.0, 0.5, 1.0)", 
+                "color-speed": "80.0", 
+                "color-start": "(0.0, 0.5, 1.0)", 
+                "color-steps": "256", 
+                "feature": "beat", 
+                "speed": "300.0", 
+                "width": "20.0"
+            }
+        }, 
+        {
+            "classname": "RadialRainbow", 
+            "name": "RadialRainbow-1", 
+            "params": {
+                "speed": "0.2", 
+                "width": "1.0"
+            }
+        }, 
+        {
+            "classname": "SpiralGradient", 
+            "name": "eye hurt", 
+            "params": {
+                "angle-hue-width": "1.0", 
+                "center-distance": "0.0", 
+                "center-speed": "0.0", 
+                "color-end": "(2.0, 1.0, 1.0)", 
+                "color-start": "(0.0, 0.0, 0.0)", 
+                "hue-speed": "0.3", 
+                "onset-speed-boost": "5.0", 
+                "onset-speed-decay": "1.0", 
+                "radius-hue-width": "1.5", 
+                "speed": "[0, 10, 1]", 
+                "wave-hue-period": "[0.1, 1, 0.1]", 
+                "wave-hue-width": "[0, 1, 0.1]", 
+                "wave-speed": "[-10, 10, 1]"
+            }
+        }, 
+        {
+            "classname": "RGBFade", 
+            "name": "RGBFade-1", 
+            "params": {
+                "speed": "0.2"
+            }
+        }, 
+        {
+            "classname": "PositionDonutParticles", 
+            "name": "PositionDonutParticles-1", 
+            "params": {
+                "color-end": "(1.0, 0.5, 1.0)", 
+                "color-speed": "10.0", 
+                "color-start": "(0.0, 0.5, 1.0)", 
+                "color-steps": "256", 
+                "feature": "beat", 
+                "speed": null, 
+                "width": null
+            }
+        }, 
+        {
+            "classname": "CombinePresets", 
+            "name": "donut mask", 
+            "params": {
+                "first-preset": "BlankDonuts-1", 
+                "layer": "default", 
+                "second-preset": "eye hurt", 
+                "transition-mode": "Mask Blend", 
+                "transition-progress": "0.5"
+            }
+        }, 
+        {
+            "classname": "SpiralGradient", 
+            "name": "SpiralGradient-1", 
+            "params": {
+                "angle-hue-width": "2.0", 
+                "center-distance": "0.0", 
+                "center-speed": "0.0", 
+                "color-end": "(1.0, 0.5, 1.0)", 
+                "color-start": "(0.0, 0.5, 1.0)", 
+                "hue-speed": "0.3", 
+                "onset-speed-boost": "5.0", 
+                "onset-speed-decay": "1.0", 
+                "radius-hue-width": "1.5", 
+                "speed": "0.3", 
+                "wave-hue-period": "0.1", 
+                "wave-hue-width": "0.1", 
+                "wave-speed": "0.1"
+            }
+        }
+    ]
+}
