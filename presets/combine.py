@@ -17,6 +17,7 @@ class CombinePresets(RawPreset):
         self.parameter_changed(None)
         self._preset1_buffer = BufferUtils.create_buffer()
         self._preset2_buffer = BufferUtils.create_buffer()
+        self.parameter_changed(self.parameter('transition-mode'))
 
     def layer(self):
         return self._mixer.layer_by_name(self.parameter('layer').get())
